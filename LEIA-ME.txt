@@ -1,0 +1,12 @@
+C$ V7 — sincronização Supabase
+
+1. Faça backup pelo menu Configurações → Backup e dados em cada aparelho antes de atualizar.
+2. Publique TODOS os arquivos desta pasta na raiz do mesmo repositório GitHub Pages, substituindo os arquivos anteriores.
+3. Abra o app e crie uma conta com e-mail e senha; confirme o e-mail se o Supabase solicitar.
+4. Faça login com a MESMA conta no notebook e no Android.
+5. Os dados locais serão conciliados com os dados da nuvem no primeiro login.
+
+Configuração esperada no Supabase: tabela public.user_data com RLS habilitado e política por auth.uid() = user_id.
+A chave publishable fica no front-end; nunca coloque chave sb_secret/service_role no HTML.
+
+Atenção: teste primeiro com backup e dados de teste. Esta versão sincroniza o objeto completo do app; se dois aparelhos editarem o MESMO registro ao mesmo tempo, a última gravação pode prevalecer para esse registro.

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080808"><title>C$</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png" type="image/png"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--navy:#080808;--blue:#c49a3a;--green:#16845b;--red:#bd4b55;--bg:#f3f6f8;--card:#fff;--ink:#182532;--muted:#657482;--line:#e3e9ed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--navy);color:white;padding:20px 16px 16px;border-radius:0 0 20px 20px}header .top{display:flex;justify-content:space-between;align-items:center}h1{font-size:19px;margin:0}header p{color:#c8d6e0;margin:5px 0 14px;font-size:12px}.balance{font-size:29px;font-weight:800}.small{font-size:11px;color:#c8d6e0}
+nav{display:flex;gap:7px;padding:12px 12px 0;overflow:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}.tab{white-space:nowrap;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 12px;font-weight:700;color:var(--muted)}.tab.active{background:var(--navy);color:white;border-color:var(--navy)}
+main{padding:12px;max-width:850px;margin:auto}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:10px;box-shadow:0 2px 8px #132d4208}.label{font-size:11px;color:var(--muted)}.amount{font-size:19px;font-weight:800;margin-top:4px}.green{color:var(--green)}.red{color:var(--red)}h2{font-size:15px;margin:2px 0 11px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}input,select,button{font:inherit}input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink)}button.primary{border:0;background:var(--blue);color:white;border-radius:9px;padding:11px 13px;font-weight:750;width:100%;margin-top:9px}button.secondary{border:1px solid var(--line);background:white;border-radius:8px;padding:8px 10px;color:var(--ink)}button.danger{color:var(--red)}.wide{grid-column:1/-1}.hidden{display:none!important}
+.item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item strong{display:block;font-size:13px}.item small{color:var(--muted);font-size:11px}.right{text-align:right;white-space:nowrap}.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{flex:1}.hint{font-size:11px;color:var(--muted);line-height:1.45}.pill{font-size:10px;border-radius:20px;background:#edf3f7;padding:3px 7px;color:#496072}.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.bar{height:9px;background:#e8eef2;border-radius:10px;overflow:hidden;margin-top:8px}.bar span{display:block;height:100%;background:var(--green)}.notice{background:#fff8e8;border:1px solid #f0dfb6;border-radius:10px;padding:10px;font-size:11px;color:#705b28;line-height:1.4}
+#lock{position:fixed;inset:0;background:var(--navy);z-index:10;display:flex;align-items:center;justify-content:center;padding:20px;color:white}#lock .panel{width:100%;max-width:340px;text-align:center}#lock input{text-align:center;font-size:22px;letter-spacing:8px;margin:12px 0}#lock .hint{color:#d4e0e8}
+footer{text-align:center;color:var(--muted);font-size:10px;padding:16px}
+@media(max-width:390px){.formgrid{grid-template-columns:1fr}.wide{grid-column:auto}}
+@media print{header,nav,.no-print,button,footer{display:none!important}body{background:white}.card{box-shadow:none;break-inside:avoid}main{max-width:none;padding:0}.hidden{display:block!important}section{display:block!important}}
+
+.feature{background:#1b1b1b;border:1px solid #39352c;border-radius:13px;margin:10px 0;padding:0 13px;color:#f4f1e8}
+.feature summary{cursor:pointer;list-style:none;padding:14px 0;font-weight:750;color:#e2c16c}
+.feature summary::-webkit-details-marker{display:none}
+.feature summary:after{content:"＋";float:right;color:#e2c16c}
+.feature[open] summary:after{content:"−"}
+.feature section{padding-bottom:8px}
+body{background:#101010;color:#f4f1e8}
+.card{background:#1b1b1b;border-color:#39352c}
+input,select{background:#242424!important;color:#f4f1e8!important;border-color:#49443a!important}
+.tab{background:#1b1b1b;color:#d7d0c2;border-color:#49443a}
+.tab.active{background:#c49a3a;color:#111;border-color:#c49a3a}
+button.primary{background:#c49a3a;color:#111}
+button.secondary{background:#242424;color:#f4f1e8;border-color:#49443a}
+footer{color:#a9a294}
+
+#cloud-account{padding:14px}#cloud-account .row{margin-bottom:5px}#cloud-account .pill{background:#3a3322;color:#f0d17c}#cloud-account .hint{color:#bdb5a5}#cloud-account input{min-width:0}
+</style></head>
+<body>
+<div id="lock" class="hidden"><div class="panel"><h1>C$</h1><p>Digite seu PIN para acessar</p><input id="pin-entry" type="password" inputmode="numeric" maxlength="6" placeholder="••••"><button class="primary" id="unlock">Entrar</button><p class="hint" id="pin-msg"></p></div></div>
+
+<div class="card" id="cloud-account" style="max-width:850px;margin:12px auto 0;border-color:#c49a3a">
+ <div class="row"><strong>☁️ C$ — Sincronização</strong><span id="cloud-status" class="pill">Não conectado</span></div>
+ <p class="hint">Entre com o mesmo e-mail no Android e no notebook para acessar seus dados.</p>
+ <div id="cloud-auth-fields" class="formgrid">
+  <div class="wide"><label>E-mail</label><input id="cloud-email" type="email" autocomplete="username" placeholder="seuemail@exemplo.com"></div>
+  <div class="wide"><label>Senha (mínimo 6 caracteres)</label><input id="cloud-password" type="password" autocomplete="current-password" placeholder="Sua senha"></div>
+  <button class="primary" id="cloud-login" type="button">Entrar</button><button class="secondary" id="cloud-signup" type="button">Criar conta</button>
+ </div>
+ <div id="cloud-logged" class="hidden"><div class="hint" id="cloud-user"></div><button class="secondary danger" id="cloud-logout" type="button" style="margin-top:8px">Sair da conta</button></div>
+ <p class="hint" id="cloud-message" aria-live="polite"></p>
+</div>
+
+<header><div class="top"><h1>C$</h1><span>💼</span></div><p id="period">Resumo financeiro</p><div class="small">SALDO PESSOAL DO MÊS</div><div class="balance" id="balance">R$ 0,00</div></header>
+<nav class="no-print"><button class="tab active" data-tab="pessoal">Pessoal</button><button class="tab" data-tab="mei">MEI</button></nav>
+<main><section id="pessoal" class="main-tab">
+<div class="stats"><div class="card"><div class="label">Entradas do mês</div><div class="amount green" id="p-in">R$ 0,00</div></div><div class="card"><div class="label">Despesas do mês</div><div class="amount red" id="p-out">R$ 0,00</div></div></div>
+
+<details class="feature" id="split-feature">
+<summary>Dividir recebimento automaticamente</summary>
+<section id="dividir">
+<div class="card">
+<h2>Quanto você recebeu?</h2>
+<p class="hint">Informe o valor que entrou e o C$ calcula a distribuição. Os percentuais são editáveis e precisam somar 100%.</p>
+<div class="formgrid">
+<div class="wide"><label>Valor recebido (R$)</label><input id="split-amount" type="number" min=".01" step=".01" placeholder="Ex.: 1000,00"></div>
+<div><label>MEI / operação (%)</label><input id="split-mei-pct" type="number" min="0" max="100" step=".01" value="33.33"></div>
+<div><label>Pessoal (%)</label><input id="split-personal-pct" type="number" min="0" max="100" step=".01" value="28.33"></div>
+<div><label>Dívidas (%)</label><input id="split-debt-pct" type="number" min="0" max="100" step=".01" value="30"></div>
+<div><label>Reserva (%)</label><input id="split-reserve-pct" type="number" min="0" max="100" step=".01" value="8.34"></div>
+</div>
+<div class="card" style="margin-top:10px;background:#242424">
+<div class="row"><span>MEI / operação</span><strong id="split-mei-value">R$ 0,00</strong></div>
+<div class="row"><span>Pessoal</span><strong id="split-personal-value">R$ 0,00</strong></div>
+<div class="row"><span>Dívidas</span><strong id="split-debt-value">R$ 0,00</strong></div>
+<div class="row"><span>Reserva</span><strong id="split-reserve-value">R$ 0,00</strong></div>
+<hr style="border:0;border-top:1px solid #49443a">
+<div class="row"><strong>Total distribuído</strong><strong id="split-total-value">R$ 0,00</strong></div>
+<div class="row"><span class="hint">Percentual total</span><strong id="split-percent-total">100,00%</strong></div>
+</div>
+<button class="primary" type="button" id="save-split">Salvar divisão no histórico</button>
+<p class="hint">A divisão fica registrada no histórico, sem lançar novamente a receita nas contas Pessoal ou MEI. Isso evita duplicidade com a agenda de serviços e os lançamentos financeiros.</p>
+</div>
+<div class="card"><h2>Histórico de divisões</h2><div id="split-history"></div></div>
+</section>
+</details>
+
+<div class="card"><h2>Adicionar lançamento pessoal</h2><form id="personal-form" class="formgrid">
+<div class="wide"><label>Descrição</label><input name="desc" required placeholder="Ex.: salário, mercado, aluguel"></div>
+<div><label>Tipo</label><select name="type"><option value="in">Entrada</option><option value="out">Despesa</option></select></div><div><label>Valor (R$)</label><input name="amount" type="number" min=".01" step=".01" required></div>
+<div><label>Categoria</label><select name="category"><option>Salário</option><option>Moradia</option><option>Alimentação</option><option>Transporte</option><option>Saúde</option><option>Educação</option><option>Lazer</option><option>Cartão</option><option>Outros</option></select></div><div><label>Data</label><input name="date" type="date" required></div><button class="primary wide">Salvar lançamento</button></form></div>
+<div class="card"><h2>Movimentações pessoais</h2><div id="personal-list"></div></div></section>
+<details class="feature" open>
+<summary>Agenda de trabalho</summary>
+<div class="card">
+<h2>Novo serviço / compromisso</h2>
+<form id="agenda-form" class="formgrid">
+<div><label>Data do serviço</label><input name="date" type="date" required></div>
+<div><label>Horário</label><input name="time" type="time"></div>
+<div class="wide"><label>Empresa / cliente</label><input name="company" required placeholder="Nome da empresa ou cliente"></div>
+<div class="wide"><label>Local do serviço</label><input name="place" required placeholder="Endereço, cidade ou local do evento"></div>
+<div><label>Tipo de serviço</label><input name="service" required placeholder="Ex.: manutenção de painel LED"></div>
+<div><label>Valor cobrado (R$)</label><input name="amount" type="number" min=".01" step=".01" required placeholder="0,00"></div>
+<div><label>Precisa emitir nota fiscal?</label><select name="invoice"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
+<div><label>Direcionar receita para</label><select name="destination"><option value="mei">MEI</option><option value="pessoal">Pessoal</option></select></div>
+<div class="wide"><label>Observações</label><input name="notes" placeholder="Detalhes adicionais (opcional)"></div>
+<button class="primary wide">Salvar na agenda e lançar receita</button>
+</form>
+<p class="hint">Ao salvar, o valor será registrado automaticamente como receita na área escolhida (MEI ou Pessoal), usando a data do serviço. Não lance a mesma receita novamente manualmente para evitar duplicidade.</p>
+</div>
+<div class="card"><h2>Serviços agendados</h2><div id="agenda-list"></div></div>
+</details>
+<details class="feature"><summary>Cartões e compras parceladas</summary><section id="cartoes">
+<div class="card"><h2>Cadastrar cartão</h2><form id="card-form" class="formgrid"><div><label>Nome do cartão</label><input name="name" required placeholder="Ex.: Cartão principal"></div><div><label>Limite (R$)</label><input name="limit" type="number" min="0" step=".01" placeholder="Opcional"></div><div><label>Dia de fechamento</label><input name="closing" type="number" min="1" max="31" required></div><div><label>Dia de vencimento</label><input name="due" type="number" min="1" max="31" required></div><button class="primary wide">Cadastrar cartão</button></form></div>
+<div class="card"><h2>Registrar compra parcelada</h2><form id="purchase-form" class="formgrid"><div class="wide"><label>Descrição da compra</label><input name="desc" required placeholder="Ex.: notebook"></div><div><label>Cartão</label><select name="card" id="purchase-card" required></select></div><div><label>Valor total (R$)</label><input name="amount" type="number" min=".01" step=".01" required></div><div><label>Número de parcelas</label><input name="installments" type="number" min="1" max="48" value="1" required></div><div><label>Data da compra</label><input name="date" type="date" required></div><button class="primary wide">Salvar compra</button></form></div>
+<div class="card"><h2>Meus cartões</h2><div id="cards-list"></div></div><div class="card"><h2>Compras parceladas</h2><div id="purchases-list"></div></div>
+<p class="hint">O controle de cartões é auxiliar: confira sempre a fatura emitida pelo banco. As parcelas ficam separadas dos lançamentos pessoais para evitar somar a compra duas vezes automaticamente.</p>
+</section></details><details class="feature"><summary>Contas a pagar e vencimentos</summary><section id="contas">
+<div class="card"><h2>Cadastrar conta a pagar</h2><form id="bill-form" class="formgrid"><div class="wide"><label>Descrição</label><input name="desc" required placeholder="Ex.: conta de luz"></div><div><label>Valor (R$)</label><input name="amount" type="number" min=".01" step=".01" required></div><div><label>Vencimento</label><input name="due" type="date" required></div><div><label>Categoria</label><select name="category"><option>Moradia</option><option>Água e luz</option><option>Internet/telefone</option><option>Impostos</option><option>Fornecedor</option><option>Outros</option></select></div><div><label>Área</label><select name="area"><option value="pessoal">Pessoal</option><option value="mei">MEI</option></select></div><button class="primary wide">Adicionar conta</button></form></div>
+<div class="card"><h2>Contas e vencimentos</h2><div id="bills-list"></div></div>
+</section></details><details class="feature"><summary>Relatórios pessoais</summary><section id="relatorios">
+<div class="card"><h2>Relatório financeiro</h2><div class="formgrid"><div><label>Mês</label><input id="report-month" type="month"></div><div><label>Área</label><select id="report-area"><option value="all">Pessoal + MEI</option><option value="pessoal">Pessoal</option><option value="mei">MEI</option></select></div></div><div id="report-result" style="margin-top:12px"></div><button class="primary no-print" id="print-report">Imprimir / salvar PDF</button></div>
+</section></details><details class="feature"><summary>Configurações, PIN e backup</summary><section id="config">
+<div class="card"><h2>Limite anual de faturamento MEI</h2><form id="limit-form" class="formgrid"><div class="wide"><label>Limite de referência (R$)</label><input name="limit" type="number" min="1" step="1" required></div><button class="primary wide">Salvar limite</button></form><p class="hint">Ajuste conforme a regra aplicável ao seu tipo de MEI. O valor inicial é uma referência comum e não confirma seu enquadramento.</p></div>
+<div class="card"><h2>Proteção por PIN</h2><p class="hint">Crie ou altere um PIN numérico de 4 a 6 dígitos. O PIN é armazenado como hash local; isso é uma barreira básica, não criptografia dos dados. Proteja também o bloqueio de tela do celular.</p><form id="pin-form" class="formgrid"><div class="wide"><label>Novo PIN (4 a 6 dígitos)</label><input name="pin" type="password" inputmode="numeric" pattern="[0-9]{4,6}" minlength="4" maxlength="6" required></div><button class="primary wide">Ativar / alterar PIN</button></form><button class="secondary danger" id="remove-pin" style="margin-top:8px;width:100%">Remover PIN</button></div>
+<div class="card"><h2>Backup e dados</h2><p class="hint">Exporte backups regularmente. O backup contém dados pessoais e financeiros: guarde-o em local seguro.</p><div class="actions"><button class="secondary" id="export">Exportar backup</button><button class="secondary" id="import-btn">Importar backup</button><input id="import-file" type="file" accept="application/json" hidden></div></div>
+</section></details><section id="mei" class="main-tab hidden">
+<div class="stats"><div class="card"><div class="label">Receitas no mês</div><div class="amount green" id="m-in">R$ 0,00</div></div><div class="card"><div class="label">Despesas no mês</div><div class="amount red" id="m-out">R$ 0,00</div></div></div>
+<div class="card"><h2>Adicionar movimentação MEI</h2><form id="mei-form" class="formgrid">
+<div class="wide"><label>Cliente / descrição do serviço</label><input name="desc" required placeholder="Ex.: manutenção de painel LED"></div>
+<div><label>Tipo</label><select name="type"><option value="in">Receita</option><option value="out">Despesa</option></select></div><div><label>Valor (R$)</label><input name="amount" type="number" min=".01" step=".01" required></div>
+<div><label>Categoria</label><select name="category"><option>Serviço</option><option>Venda</option><option>Material</option><option>Equipamento</option><option>Transporte</option><option>DAS</option><option>Taxas</option><option>Outros</option></select></div><div><label>Data</label><input name="date" type="date" required></div><button class="primary wide">Salvar movimentação</button></form></div>
+<div class="card"><h2>Movimentações MEI</h2><div id="mei-list"></div></div>
+<div class="card"><h2>Faturamento anual do MEI</h2><div class="row"><span class="label" id="annual-label">Receita bruta no ano</span><strong id="annual-total">R$ 0,00</strong></div><div class="bar"><span id="annual-bar" style="width:0%"></span></div><p class="hint" id="annual-percent"></p><div class="notice">O limite usado é apenas uma referência configurável. Confirme o limite aplicável ao seu enquadramento e atividade nos canais oficiais. O acompanhamento não substitui a declaração anual nem a orientação contábil.</div></div>
+<div class="card"><h2>Resultado do MEI no mês</h2><div class="amount" id="mei-profit">R$ 0,00</div></div>
+</section><details class="feature"><summary>Cadastro de clientes</summary><section id="clientes">
+<div class="card"><h2>Cadastrar cliente MEI</h2><form id="client-form" class="formgrid"><div><label>Nome / empresa</label><input name="name" required></div><div><label>Telefone</label><input name="phone" type="tel"></div><div class="wide"><label>E-mail</label><input name="email" type="email"></div><div class="wide"><label>Observações</label><input name="notes" placeholder="Endereço, serviço habitual etc."></div><button class="primary wide">Salvar cliente</button></form></div>
+<div class="card"><h2>Clientes cadastrados</h2><div id="clients-list"></div></div>
+</section></details></main><footer>C$ • Controle financeiro pessoal e MEI</footer>
+<script>
+const KEY='meuControleFinanceiro_v2', old=localStorage.getItem('meuControleFinanceiro_v1');
+const empty={pessoal:[],mei:[],cards:[],purchases:[],bills:[],clients:[],agenda:[],divisions:[],annualLimit:81000,pinHash:null};
+let data;try{data={...empty,...(JSON.parse(localStorage.getItem(KEY)||'null')|| (old?JSON.parse(old):{}))};if(!Array.isArray(data.agenda))data.agenda=[];if(!Array.isArray(data.divisions))data.divisions=[]}catch{data={...empty}}
+const brl=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const today=()=>new Date().toISOString().slice(0,10), month=()=>today().slice(0,7);
+document.querySelectorAll('input[type=date]').forEach(x=>x.value=today());
+document.getElementById('report-month').value=month();
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function sum(a){return a.reduce((s,x)=>s+Number(x.amount||0),0)}
+function totals(a){return a.reduce((s,x)=>(s[x.type]+=Number(x.amount),s),{in:0,out:0})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function remove(area,id){if(confirm('Excluir este registro?')){data[area]=data[area].filter(x=>x.id!==id);persist()}}
+window.remove=remove;
+function listMov(id,arr,area){let el=document.getElementById(id);if(!arr.length){el.innerHTML='<p class="hint">Nenhum registro cadastrado.</p>';return}el.innerHTML=[...arr].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(x=>`<div class="item"><div><strong>${esc(x.desc)}</strong><small>${esc(x.category)} • ${new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')}</small></div><div class="right"><strong class="${x.type==='in'?'green':'red'}">${x.type==='in'?'+':'−'} ${brl(x.amount)}</strong><br><button class="secondary" onclick="remove('${area}','${x.id}')">Excluir</button></div></div>`).join('')}
+
+function renderAgenda(){
+ const el=document.getElementById('agenda-list');
+ if(!data.agenda.length){el.innerHTML='<p class="hint">Nenhum serviço agendado ainda.</p>';return}
+ el.innerHTML=[...data.agenda].sort((a,b)=>(a.date+' '+(a.time||'')).localeCompare(b.date+' '+(b.time||''))).map(x=>{
+ const dest=x.destination==='mei'?'MEI':'Pessoal';
+ return `<div class="item"><div><strong>${esc(x.company)} — ${esc(x.service)}</strong><small>${new Date(x.date+'T12:00:00').toLocaleDateString('pt-BR')} ${x.time?'às '+esc(x.time):''} • ${esc(x.place)}<br>Nota fiscal: ${esc(x.invoice)} • Receita: ${dest}${x.notes?'<br>'+esc(x.notes):''}</small></div><div class="right"><strong class="green">${brl(x.amount)}</strong><br><button class="secondary" onclick="deleteAgenda('${x.id}')">Excluir</button></div></div>`;
+ }).join('');
+}
+window.deleteAgenda=id=>{
+ if(!confirm('Excluir este compromisso e também a receita vinculada?'))return;
+ const a=data.agenda.find(x=>x.id===id);
+ if(a){data[a.destination]=data[a.destination].filter(x=>x.agendaId!==id);data.agenda=data.agenda.filter(x=>x.id!==id);persist()}
+};
+function render(){
+let p=data.pessoal.filter(x=>x.date?.slice(0,7)===month()),m=data.mei.filter(x=>x.date?.slice(0,7)===month()),pt=totals(p),mt=totals(m);
+document.getElementById('period').textContent=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+document.getElementById('balance').textContent=brl(pt.in-pt.out);
+document.getElementById('p-in').textContent=brl(pt.in);document.getElementById('p-out').textContent=brl(pt.out);
+document.getElementById('m-in').textContent=brl(mt.in);document.getElementById('m-out').textContent=brl(mt.out);
+document.getElementById('mei-profit').textContent=brl(mt.in-mt.out);
+listMov('personal-list',data.pessoal,'pessoal');listMov('mei-list',data.mei,'mei');renderAgenda();
+let year=String(new Date().getFullYear()),annual=sum(data.mei.filter(x=>x.type==='in'&&x.date?.startsWith(year))),lim=Number(data.annualLimit)||81000,pct=lim?annual/lim*100:0;
+document.getElementById('annual-total').textContent=brl(annual);document.getElementById('annual-bar').style.width=Math.min(100,pct)+'%';document.getElementById('annual-percent').textContent=`${pct.toFixed(1).replace('.',',')}% do limite configurado de ${brl(lim)} em ${year}.`;
+document.querySelector('#limit-form [name=limit]').value=lim;
+document.getElementById('cards-list').innerHTML=data.cards.length?data.cards.map(c=>{let spent=sum(data.purchases.filter(x=>x.cardId===c.id));return `<div class="item"><div><strong>${esc(c.name)}</strong><small>Fecha dia ${c.closing} • vence dia ${c.due} • Limite ${c.limit?brl(c.limit):'não informado'}</small></div><div class="right"><strong>${brl(spent)} em compras</strong><br><button class="secondary" onclick="remove('cards','${c.id}')">Excluir</button></div></div>`}).join(''):'<p class="hint">Cadastre seu primeiro cartão.</p>';
+document.getElementById('purchase-card').innerHTML=data.cards.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+document.getElementById('purchases-list').innerHTML=data.purchases.length?[...data.purchases].reverse().map(x=>{let c=data.cards.find(c=>c.id===x.cardId);return `<div class="item"><div><strong>${esc(x.desc)}</strong><small>${esc(c?.name||'Cartão removido')} • ${x.installments}x de ${brl(x.amount/x.installments)}</small></div><div class="right"><strong>${brl(x.amount)}</strong><br><button class="secondary" onclick="remove('purchases','${x.id}')">Excluir</button></div></div>`}).join(''):'<p class="hint">Nenhuma compra registrada.</p>';
+document.getElementById('bills-list').innerHTML=data.bills.length?[...data.bills].sort((a,b)=>a.due.localeCompare(b.due)).map(x=>`<div class="item"><div><strong>${esc(x.desc)} <span class="pill">${x.paid?'Paga':(x.due<today()?'Atrasada':'Pendente')}</span></strong><small>${esc(x.category)} • ${x.area==='mei'?'MEI':'Pessoal'} • Vence ${new Date(x.due+'T12:00:00').toLocaleDateString('pt-BR')}</small></div><div class="right"><strong>${brl(x.amount)}</strong><br><button class="secondary" onclick="toggleBill('${x.id}')">${x.paid?'Reabrir':'Marcar paga'}</button> <button class="secondary" onclick="remove('bills','${x.id}')">Excluir</button></div></div>`).join(''):'<p class="hint">Nenhuma conta cadastrada.</p>';
+document.getElementById('clients-list').innerHTML=data.clients.length?data.clients.map(x=>`<div class="item"><div><strong>${esc(x.name)}</strong><small>${esc(x.phone)} ${x.email?'• '+esc(x.email):''}<br>${esc(x.notes)}</small></div><button class="secondary" onclick="remove('clients','${x.id}')">Excluir</button></div>`).join(''):'<p class="hint">Nenhum cliente cadastrado.</p>';
+report();
+}
+window.toggleBill=id=>{let x=data.bills.find(b=>b.id===id);if(x){x.paid=!x.paid;persist()}};
+function bind(id,area,mapper){document.getElementById(id).addEventListener('submit',e=>{e.preventDefault();let f=new FormData(e.target),v=mapper?mapper(f):Object.fromEntries(f);data[area].push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),...v});e.target.reset();e.target.querySelectorAll('input[type=date]').forEach(x=>x.value=today());persist()})}
+bind('personal-form','pessoal',f=>({desc:f.get('desc'),type:f.get('type'),amount:+f.get('amount'),category:f.get('category'),date:f.get('date')}));
+bind('mei-form','mei',f=>({desc:f.get('desc'),type:f.get('type'),amount:+f.get('amount'),category:f.get('category'),date:f.get('date')}));
+bind('card-form','cards',f=>({name:f.get('name'),limit:+f.get('limit')||0,closing:+f.get('closing'),due:+f.get('due')}));
+bind('purchase-form','purchases',f=>({desc:f.get('desc'),cardId:f.get('card'),amount:+f.get('amount'),installments:+f.get('installments'),date:f.get('date')}));
+bind('bill-form','bills',f=>({desc:f.get('desc'),amount:+f.get('amount'),due:f.get('due'),category:f.get('category'),area:f.get('area'),paid:false}));
+
+bind('client-form','clients',f=>({name:f.get('name'),phone:f.get('phone'),email:f.get('email'),notes:f.get('notes')}));
+document.getElementById('agenda-form').addEventListener('submit',e=>{
+ e.preventDefault();
+ const f=new FormData(e.target), id=crypto.randomUUID?crypto.randomUUID():String(Date.now());
+ const destination=f.get('destination'), amount=+f.get('amount'), date=f.get('date');
+ const item={id,date,time:f.get('time'),company:f.get('company'),place:f.get('place'),service:f.get('service'),
+ amount,invoice:f.get('invoice'),destination,notes:f.get('notes')};
+ data.agenda.push(item);
+ data[destination].push({id:'agenda-'+id,agendaId:id,desc:item.company+' — '+item.service,type:'in',amount,category:'Serviço agendado',date});
+ e.target.reset();e.target.querySelector('input[name=date]').value=today();persist();
+ alert('Serviço salvo. A receita foi direcionada para '+(destination==='mei'?'MEI':'Pessoal')+'.');
+});
+
+document.getElementById('limit-form').addEventListener('submit',e=>{e.preventDefault();data.annualLimit=+new FormData(e.target).get('limit');persist();alert('Limite de referência atualizado.')});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('main > section.main-tab').forEach(s=>s.classList.toggle('hidden',s.id!==b.dataset.tab));if(b.dataset.tab==='relatorios')report()});
+function report(){let mm=document.getElementById('report-month').value||month(),area=document.getElementById('report-area').value,arr=[];if(area!=='mei')arr=arr.concat(data.pessoal.filter(x=>x.date?.slice(0,7)===mm).map(x=>({...x,origin:'Pessoal'})));if(area!=='pessoal')arr=arr.concat(data.mei.filter(x=>x.date?.slice(0,7)===mm).map(x=>({...x,origin:'MEI'})));let t=totals(arr);document.getElementById('report-result').innerHTML=`<p><b>Período:</b> ${mm}</p><p>Entradas: <b class="green">${brl(t.in)}</b></p><p>Saídas: <b class="red">${brl(t.out)}</b></p><p>Resultado: <b>${brl(t.in-t.out)}</b></p><hr>${arr.map(x=>`<div class="item"><div>${esc(x.desc)}<small>${x.origin} • ${esc(x.category)} • ${x.date}</small></div><b>${brl(x.amount)}</b></div>`).join('')||'<p class="hint">Sem movimentações neste período.</p>'}`}
+document.getElementById('report-month').onchange=report;document.getElementById('report-area').onchange=report;document.getElementById('print-report').onclick=()=>window.print();
+document.getElementById('export').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-meu-controle-financeiro.json';a.click();URL.revokeObjectURL(a.href)};
+document.getElementById('import-btn').onclick=()=>document.getElementById('import-file').click();
+document.getElementById('import-file').onchange=async e=>{try{let v=JSON.parse(await e.target.files[0].text());if(!['pessoal','mei','cards','purchases','bills','clients'].every(k=>Array.isArray(v[k])))throw 0;if(confirm('A importação substituirá todos os dados atuais. Continuar?')){data={...empty,...v,agenda:Array.isArray(v.agenda)?v.agenda:[],divisions:Array.isArray(v.divisions)?v.divisions:[]};persist();renderSplits();alert('Backup importado.')}}catch{alert('Arquivo inválido ou incompatível.')}e.target.value=''};
+async function hashPin(pin){let b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pin));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+document.getElementById('pin-form').onsubmit=async e=>{e.preventDefault();let pin=new FormData(e.target).get('pin');data.pinHash=await hashPin(pin);persist();e.target.reset();alert('PIN ativado.');};
+document.getElementById('remove-pin').onclick=()=>{if(confirm('Remover a proteção por PIN?')){data.pinHash=null;persist();alert('PIN removido.')}};
+if(data.pinHash){document.getElementById('lock').classList.remove('hidden');document.getElementById('unlock').onclick=async()=>{let pin=document.getElementById('pin-entry').value;if(await hashPin(pin)===data.pinHash){document.getElementById('lock').classList.add('hidden')}else document.getElementById('pin-msg').textContent='PIN incorreto. Tente novamente.'}}
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+const splitKeys=['mei','personal','debt','reserve'];
+const splitBRL=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function splitPercentages(){
+ return {
+  mei:Math.max(0,Number(document.getElementById('split-mei-pct').value)||0),
+  personal:Math.max(0,Number(document.getElementById('split-personal-pct').value)||0),
+  debt:Math.max(0,Number(document.getElementById('split-debt-pct').value)||0),
+  reserve:Math.max(0,Number(document.getElementById('split-reserve-pct').value)||0)
+ };
+}
+function calculateSplit(){
+ const amount=Math.max(0,Number(document.getElementById('split-amount').value)||0),p=splitPercentages();
+ const pct=p.mei+p.personal+p.debt+p.reserve;
+ const values={mei:amount*p.mei/100,personal:amount*p.personal/100,debt:amount*p.debt/100,reserve:amount*p.reserve/100};
+ document.getElementById('split-mei-value').textContent=splitBRL(values.mei);
+ document.getElementById('split-personal-value').textContent=splitBRL(values.personal);
+ document.getElementById('split-debt-value').textContent=splitBRL(values.debt);
+ document.getElementById('split-reserve-value').textContent=splitBRL(values.reserve);
+ document.getElementById('split-total-value').textContent=splitBRL(Object.values(values).reduce((a,b)=>a+b,0));
+ const pctEl=document.getElementById('split-percent-total');
+ pctEl.textContent=pct.toFixed(2).replace('.',',')+'%';
+ pctEl.style.color=Math.abs(pct-100)<0.005?'#5cc58a':'#f07b72';
+ return {amount,pct,values};
+}
+function renderSplits(){
+ const el=document.getElementById('split-history');
+ if(!data.divisions.length){el.innerHTML='<p class="hint">Nenhuma divisão registrada ainda.</p>';return}
+ el.innerHTML=[...data.divisions].reverse().map(x=>`<div class="item"><div><strong>${splitBRL(x.amount)}</strong><small>${new Date(x.date).toLocaleString('pt-BR')}</small><small>MEI ${splitBRL(x.values.mei)} • Pessoal ${splitBRL(x.values.personal)}<br>Dívidas ${splitBRL(x.values.debt)} • Reserva ${splitBRL(x.values.reserve)}</small></div><div class="right"><button class="secondary" onclick="deleteSplit('${x.id}')">Excluir</button></div></div>`).join('');
+}
+window.deleteSplit=id=>{if(confirm('Excluir esta divisão do histórico?')){data.divisions=data.divisions.filter(x=>x.id!==id);persist();renderSplits()}};
+['split-amount','split-mei-pct','split-personal-pct','split-debt-pct','split-reserve-pct'].forEach(id=>document.getElementById(id).addEventListener('input',calculateSplit));
+document.getElementById('save-split').addEventListener('click',()=>{
+ const result=calculateSplit();
+ if(result.amount<=0){alert('Informe um valor recebido maior que zero.');return}
+ if(Math.abs(result.pct-100)>.005){alert('Os percentuais precisam somar 100% antes de salvar.');return}
+ const vals={mei:+result.values.mei.toFixed(2),personal:+result.values.personal.toFixed(2),debt:+result.values.debt.toFixed(2),reserve:+result.values.reserve.toFixed(2)};
+ const rounded=Object.values(vals).reduce((a,b)=>a+b,0);
+ vals.reserve=+(vals.reserve+(result.amount-rounded)).toFixed(2);
+ data.divisions.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),amount:+result.amount.toFixed(2),percentages:splitPercentages(),values:vals,date:new Date().toISOString()});
+ persist();renderSplits();
+ document.getElementById('split-amount').value='';calculateSplit();
+ alert('Divisão salva no histórico.');
+});
+
+
+// --- C$ Cloud Sync (Supabase) ---
+const SUPABASE_URL = 'https://rqbumsdplumdcoosjpmr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_moMmmT_yW6RIG3tFffSsdw_0XTTOjIR';
+const CLOUD_SESSION_KEY = 'c_dollar_supabase_session_v1';
+let cloudSession = null, cloudReady = false, cloudSaveTimer = null, cloudSaveChain = Promise.resolve();
+const cloudStatus = document.getElementById('cloud-status');
+const cloudMessage = document.getElementById('cloud-message');
+function cloudSay(message, status){ cloudMessage.textContent=message||''; if(status) cloudStatus.textContent=status; }
+function cloudHeaders(token){ return {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+(token||SUPABASE_KEY),'Content-Type':'application/json'}; }
+async function cloudAuth(path, body){
+ const r=await fetch(SUPABASE_URL+'/auth/v1/'+path,{method:'POST',headers:cloudHeaders(SUPABASE_KEY),body:JSON.stringify(body)});
+ const j=await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.msg||j.message||j.error_description||j.error||'Falha na autenticação'); return j;
+}
+function showCloudAccount(){
+ const logged=!!cloudSession;
+ document.getElementById('cloud-auth-fields').classList.toggle('hidden',logged);
+ document.getElementById('cloud-logged').classList.toggle('hidden',!logged);
+ document.getElementById('cloud-user').textContent=logged?(cloudSession.user?.email||'Conta conectada'):'';
+ if(logged) cloudStatus.textContent='Conectado'; else cloudStatus.textContent='Não conectado';
+}
+function mergeCloudData(remote, local){
+ const merged={...remote,...local};
+ for(const k of ['pessoal','mei','cards','purchases','bills','clients','agenda','divisions']){
+  const map=new Map();
+  for(const x of (Array.isArray(remote?.[k])?remote[k]:[])) map.set(String(x.id),x);
+  for(const x of (Array.isArray(local?.[k])?local[k]:[])) map.set(String(x.id),x);
+  merged[k]=[...map.values()];
+ }
+ return merged;
+}
+async function cloudRequest(path, options={}){
+ const r=await fetch(SUPABASE_URL+'/rest/v1/'+path,{...options,headers:{...cloudHeaders(cloudSession?.access_token),...(options.headers||{})}});
+ if(!r.ok){const t=await r.text();throw new Error(t||'Erro ao acessar o banco de dados');}
+ if(r.status===204) return null; return r.json();
+}
+async function loadCloudData(){
+ const rows=await cloudRequest('user_data?select=data&user_id=eq.'+encodeURIComponent(cloudSession.user.id));
+ const local=JSON.parse(localStorage.getItem(KEY)||'null')||data;
+ if(rows && rows.length && rows[0].data){ data=mergeCloudData(rows[0].data,local); localStorage.setItem(KEY,JSON.stringify(data)); }
+ else { data=local; await saveCloudData(); }
+ render(); renderSplits(); calculateSplit();
+}
+async function saveCloudData(){
+ if(!cloudSession||!cloudReady) return;
+ const snapshot=JSON.parse(JSON.stringify(data));
+ cloudSaveChain=cloudSaveChain.then(()=>cloudRequest('user_data?on_conflict=user_id',{method:'POST',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:cloudSession.user.id,data:snapshot,updated_at:new Date().toISOString()})}));
+ try{await cloudSaveChain;cloudSay('Alterações salvas na nuvem.','Sincronizado');}
+ catch(e){cloudSay('Os dados continuam salvos neste aparelho. Falha na nuvem: '+e.message,'Aguardando conexão');}
+}
+function scheduleCloudSave(){ if(!cloudSession||!cloudReady)return; clearTimeout(cloudSaveTimer); cloudSaveTimer=setTimeout(saveCloudData,700); }
+async function connectCloud(session){
+ cloudSession=session; localStorage.setItem(CLOUD_SESSION_KEY,JSON.stringify(session)); showCloudAccount(); cloudReady=false; cloudSay('Carregando e conciliando seus dados...','Conectando');
+ try{await loadCloudData();cloudReady=true;await saveCloudData();cloudSay('Dados carregados e enviados para a nuvem. Este aparelho está conectado à sua conta.','Sincronizado');}
+ catch(e){cloudSay('Não foi possível carregar os dados: '+e.message,'Erro de conexão');}
+}
+document.getElementById('cloud-login').onclick=async()=>{
+ const email=document.getElementById('cloud-email').value.trim(),password=document.getElementById('cloud-password').value;
+ if(!email||!password){cloudSay('Informe e-mail e senha.');return;}
+ try{cloudSay('Entrando...','Conectando');const s=await cloudAuth('token?grant_type=password',{email,password});await connectCloud(s);}
+ catch(e){cloudSay(e.message,'Falha no login');}
+};
+document.getElementById('cloud-signup').onclick=async()=>{
+ const email=document.getElementById('cloud-email').value.trim(),password=document.getElementById('cloud-password').value;
+ if(!email||password.length<6){cloudSay('Informe um e-mail válido e uma senha com pelo menos 6 caracteres.');return;}
+ try{cloudSay('Criando conta...','Cadastro');const s=await cloudAuth('signup',{email,password});
+  if(s.access_token) await connectCloud(s); else cloudSay('Cadastro criado! Verifique seu e-mail para confirmar a conta e depois faça login.','Confirme seu e-mail');
+ }catch(e){cloudSay(e.message,'Falha no cadastro');}
+};
+document.getElementById('cloud-logout').onclick=()=>{cloudSession=null;cloudReady=false;localStorage.removeItem(CLOUD_SESSION_KEY);showCloudAccount();cloudSay('Você saiu. Os dados locais deste aparelho foram mantidos.','Desconectado');};
+(async()=>{
+ showCloudAccount();
+ try{const saved=JSON.parse(localStorage.getItem(CLOUD_SESSION_KEY)||'null');if(!saved)return;
+  let s=saved;
+  if(saved.refresh_token){try{s=await cloudAuth('token?grant_type=refresh_token',{refresh_token:saved.refresh_token});}catch(e){localStorage.removeItem(CLOUD_SESSION_KEY);return;}}
+  await connectCloud(s);
+ }catch(e){cloudSay('Não foi possível restaurar a sessão: '+e.message,'Desconectado');}
+})();
+const localPersistBeforeCloud=persist;
+persist=function(){localPersistBeforeCloud();scheduleCloudSave();};
+window.addEventListener('online',()=>{if(cloudSession&&cloudReady)saveCloudData();});
+
+render();renderSplits();calculateSplit();
+</script></body></html>
